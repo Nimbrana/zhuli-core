@@ -17,10 +17,9 @@ var mDatabase *mgo.Database
 // Connect to MongoDB Server
 func (d *MongoDBDriver) Connect() error {
 	session, err := mgo.Dial(d.Server)
-	if err != nil {
-		return err
+	if err == nil {
+		mDatabase = session.DB(d.Database)
 	}
-	mDatabase = session.DB(d.Database)
 
 	return err
 }
