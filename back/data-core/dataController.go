@@ -14,12 +14,22 @@ type DataController struct {
 	UseFileSystemDriver bool
 }
 
-var mongoDriver = MongoDBDriver{"SERVER", "DATABASE", "COLLECTION"}
+var dbConfig = DatabaseConfig{}
+
+var mongoDriver = MongoDBDriver{}
 var fsDriver = FileSystemDriver{"PATH"}
 
 // Init integrated drivers
 func (dc *DataController) Init() error {
 	if dc.UseMongoDriver {
+		if err := dbConfig.Read(); err != nil {
+			return err
+		}
+
+		mongoDriver.Server = dbConfig.Server + ":" + string(dbConfig.Port)
+		mongoDriver.Database = dbConfig.Database
+		mongoDriver.Collection = dbConfig.Collection
+
 		return mongoDriver.Connect()
 	} else if dc.UseFileSystemDriver {
 		return errors.New("FileSystemDriver " + notImplemented)
