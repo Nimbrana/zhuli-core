@@ -3,9 +3,9 @@ package datacore
 import "errors"
 
 const (
-	NotConfigured  = "DataController not configured"
-	NotImplemented = "not implemented yet"
-	CannotUseBoth  = "Cannot use both drivers yet"
+	notConfigured  = "DataController not configured"
+	notImplemented = "not implemented yet"
+	cannotUseBoth  = "Cannot use both drivers yet"
 )
 
 // DataController manage the data flow
@@ -22,12 +22,12 @@ func (dc *DataController) Init() error {
 	if dc.UseMongoDriver {
 		return mongoDriver.Connect()
 	} else if dc.UseFileSystemDriver {
-		return errors.New("FileSystemDriver " + NotImplemented)
+		return errors.New("FileSystemDriver " + notImplemented)
 	} else if dc.UseMongoDriver && dc.UseFileSystemDriver {
-		return errors.New(CannotUseBoth)
+		return errors.New(cannotUseBoth)
 	}
 
-	return errors.New(NotConfigured)
+	return errors.New(notConfigured)
 }
 
 // Save an object to Database or FileSystem (not implemented yet).
@@ -35,10 +35,10 @@ func (dc *DataController) Save(object interface{}) error {
 	if dc.UseMongoDriver {
 		return mongoDriver.Insert(object)
 	} else if dc.UseFileSystemDriver {
-		return errors.New("FileSystemDriver " + NotImplemented)
+		return errors.New("FileSystemDriver " + notImplemented)
 	}
 
-	return errors.New(NotConfigured)
+	return errors.New(notConfigured)
 }
 
 // GetAll returns all data found in the specified collection
@@ -46,8 +46,8 @@ func (dc *DataController) GetAll() ([]interface{}, error) {
 	if dc.UseMongoDriver {
 		return mongoDriver.FindAll()
 	} else if dc.UseFileSystemDriver {
-		return nil, errors.New("FileSystemDriver " + NotImplemented)
+		return nil, errors.New("FileSystemDriver " + notImplemented)
 	}
 
-	return nil, errors.New(NotConfigured)
+	return nil, errors.New(notConfigured)
 }
