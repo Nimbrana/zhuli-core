@@ -12,9 +12,14 @@ const (
 type DataController struct {
 	UseMongoDriver      bool
 	UseFileSystemDriver bool
-}
 
-var dbConfig = DatabaseConfig{}
+	Server				string
+	Database			string
+	Collection			string
+
+	User				string
+	Password			string
+}
 
 var mongoDriver = MongoDBDriver{}
 var fsDriver = FileSystemDriver{"PATH"}
@@ -22,15 +27,7 @@ var fsDriver = FileSystemDriver{"PATH"}
 // Init integrated drivers
 func (dc *DataController) Init() error {
 	if dc.UseMongoDriver {
-		if err := dbConfig.Read(); err != nil {
-			return err
-		}
-
-		mongoDriver.Server = dbConfig.Server + ":" + string(dbConfig.Port)
-		mongoDriver.Database = dbConfig.Database
-		mongoDriver.Collection = dbConfig.Collection
-
-		return mongoDriver.Connect()
+		return configureMongoDB(dc)
 	} else if dc.UseFileSystemDriver {
 		return errors.New("FileSystemDriver " + notImplemented)
 	} else if dc.UseMongoDriver && dc.UseFileSystemDriver {
@@ -38,6 +35,14 @@ func (dc *DataController) Init() error {
 	}
 
 	return errors.New(notConfigured)
+}
+
+func configureMongoDB(dc *DataController) error {
+	mongoDriver.Server = dc.Server
+	mongoDriver.Database = dc.Database
+	mongoDriver.Collection = dc.Collection
+
+	return mongoDriver.Connect()
 }
 
 // Save an object to Database or FileSystem (not implemented yet).
