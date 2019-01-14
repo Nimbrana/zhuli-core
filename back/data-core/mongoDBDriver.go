@@ -39,7 +39,6 @@ func (d *MongoDBDriver) FindByID(id string) (interface{}, error) {
 }
 
 // Insert a Bson document into mongoDB colletion
-// func (d *MongoDBDriver) Insert(object bson.M) error {
 func (d *MongoDBDriver) Insert(object interface{}) error {
 	err := mDatabase.C(d.Collection).Insert(&object)
 	return err

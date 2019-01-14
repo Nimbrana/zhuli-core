@@ -13,12 +13,12 @@ type DataController struct {
 	UseMongoDriver      bool
 	UseFileSystemDriver bool
 
-	Server				string
-	Database			string
-	Collection			string
+	Server     string
+	Database   string
+	Collection string
 
-	User				string
-	Password			string
+	User     string
+	Password string
 }
 
 var mongoDriver = MongoDBDriver{}
@@ -37,6 +37,7 @@ func (dc *DataController) Init() error {
 	return errors.New(notConfigured)
 }
 
+// configureMongoDB Initialize the connection with MongoDB
 func configureMongoDB(dc *DataController) error {
 	mongoDriver.Server = dc.Server
 	mongoDriver.Database = dc.Database
@@ -56,10 +57,43 @@ func (dc *DataController) Save(object interface{}) error {
 	return errors.New(notConfigured)
 }
 
+// Update an object of the Database or FileSystem (not implemented yet).
+func (dc *DataController) Update(id string, object interface{}) error {
+	if dc.UseMongoDriver {
+		return mongoDriver.Update(id, object)
+	} else if dc.UseFileSystemDriver {
+		return errors.New("FileSystemDriver " + notImplemented)
+	}
+
+	return errors.New(notConfigured)
+}
+
+// Delete an object of the Database or FileSystem (not implemented yet).
+func (dc *DataController) Delete(object interface{}) error {
+	if dc.UseMongoDriver {
+		return mongoDriver.Delete(object)
+	} else if dc.UseFileSystemDriver {
+		return errors.New("FileSystemDriver " + notImplemented)
+	}
+
+	return errors.New(notConfigured)
+}
+
 // GetAll returns all data found in the specified collection
 func (dc *DataController) GetAll() ([]interface{}, error) {
 	if dc.UseMongoDriver {
 		return mongoDriver.FindAll()
+	} else if dc.UseFileSystemDriver {
+		return nil, errors.New("FileSystemDriver " + notImplemented)
+	}
+
+	return nil, errors.New(notConfigured)
+}
+
+// GetByID returns an object by ID
+func (dc *DataController) GetByID(id string) (interface{}, error) {
+	if dc.UseMongoDriver {
+		return mongoDriver.FindByID(id)
 	} else if dc.UseFileSystemDriver {
 		return nil, errors.New("FileSystemDriver " + notImplemented)
 	}
