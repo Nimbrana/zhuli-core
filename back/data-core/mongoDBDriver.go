@@ -70,10 +70,16 @@ func (d *MongoDBDriver) Insert(object interface{}) error {
 
 // Delete an existing Bson document
 func (d *MongoDBDriver) Delete(object interface{}) error {
-	if err := checkForErrors(); err != nil {
+	data, err := unmarshal(object)
+	if err != nil {
 		return err
 	}
-	err := mDatabase.C(d.Collection).Remove(&object)
+
+	if err = checkForErrors(); err != nil {
+		return err
+	}
+
+	err = mDatabase.C(d.Collection).Remove(&data)
 	return err
 }
 
