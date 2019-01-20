@@ -55,3 +55,33 @@ func TestInsertData(t *testing.T) {
 		t.Errorf("%s", err)
 	}
 }
+
+func TestGetAllData(t *testing.T) {
+
+	dc.UseMongoDriver = true
+	dc.UseFileSystemDriver = false
+	dc.Server = "localhost"
+	dc.Database = "movies"
+	dc.Collection = "movies"
+	dc.User = ""
+	dc.Password = ""
+
+	// movie.ID = bson.NewObjectId()
+	// movie.Name = "Dunkirk"
+	// movie.Description = "World war 2 movie"
+	// movie.CoverImage = "https://image.tmdb.org/t/p/w640/cUqEgoP6kj8ykfNjJx3Tl5zHCcN.jpg"
+
+	//bMovie, _ := bson.Marshal(movie)
+
+	if err := dc.Init(); err != nil {
+		t.Errorf("%s", err)
+	}
+
+	data, err := dc.GetAll()
+
+	t.Log(data)
+
+	if err != nil {
+		t.Errorf("%s", err)
+	}
+}
