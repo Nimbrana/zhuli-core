@@ -20,6 +20,9 @@
 vendor/
 Godeps/
 
+### Go ###
+bin/
+
 ### Linux ###
 *~
 
