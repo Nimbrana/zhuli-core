@@ -58,9 +58,9 @@ func (dc *DataController) Save(object interface{}) error {
 }
 
 // Update an object of the Database or FileSystem (not implemented yet).
-func (dc *DataController) Update(id string, object interface{}) error {
+func (dc *DataController) Update(object interface{}) error {
 	if dc.UseMongoDriver {
-		return mongoDriver.Update(id, object)
+		return mongoDriver.Update(object)
 	} else if dc.UseFileSystemDriver {
 		return errors.New("FileSystemDriver " + notImplemented)
 	}

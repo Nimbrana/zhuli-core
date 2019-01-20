@@ -34,6 +34,11 @@ func (d *MongoDBDriver) Connect() error {
 // FindAll find all documents into collection and return an array of Bson maps
 func (d *MongoDBDriver) FindAll() ([]interface{}, error) {
 	var result []interface{}
+
+	if err := checkForErrors(); err != nil {
+		return nil, err
+	}
+
 	err := mDatabase.C(d.Collection).Find(bson.M{}).All(&result)
 	return result, err
 }
@@ -41,6 +46,9 @@ func (d *MongoDBDriver) FindAll() ([]interface{}, error) {
 // FindByID find a Bson document by id
 func (d *MongoDBDriver) FindByID(id string) (interface{}, error) {
 	var result interface{}
+	if err := checkForErrors(); err != nil {
+		return nil, err
+	}
 	err := mDatabase.C(d.Collection).FindId(bson.ObjectIdHex(id)).One(&result)
 	return result, err
 }
@@ -62,13 +70,25 @@ func (d *MongoDBDriver) Insert(object interface{}) error {
 
 // Delete an existing Bson document
 func (d *MongoDBDriver) Delete(object interface{}) error {
+	if err := checkForErrors(); err != nil {
+		return err
+	}
 	err := mDatabase.C(d.Collection).Remove(&object)
 	return err
 }
 
 // Update an existing Bson document
-func (d *MongoDBDriver) Update(id string, object interface{}) error {
-	err := mDatabase.C(d.Collection).UpdateId(id, &object)
+func (d *MongoDBDriver) Update(object interface{}) error {
+	data, err := unmarshal(object)
+	if err != nil {
+		return err
+	}
+
+	if err = checkForErrors(); err != nil {
+		return err
+	}
+
+	err = mDatabase.C(d.Collection).UpdateId(data["_id"], &data)
 	return err
 }
 
