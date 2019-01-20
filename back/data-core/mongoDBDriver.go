@@ -1,6 +1,8 @@
 package datacore
 
 import (
+	"errors"
+
 	mgo "gopkg.in/mgo.v2"
 	"gopkg.in/mgo.v2/bson"
 )
@@ -40,7 +42,11 @@ func (d *MongoDBDriver) FindByID(id string) (interface{}, error) {
 
 // Insert a Bson document into mongoDB colletion
 func (d *MongoDBDriver) Insert(object interface{}) error {
-	err := mDatabase.C(d.Collection).Insert(&object)
+	data, err := unmarshal(object)
+	if err != nil {
+		return err
+	}
+	err = mDatabase.C(d.Collection).Insert(&data)
 	return err
 }
 
@@ -59,4 +65,18 @@ func (d *MongoDBDriver) Update(id string, object interface{}) error {
 // Ping is that a simple ping
 func (d *MongoDBDriver) Ping() error {
 	return mDatabase.Session.Ping()
+}
+
+// unmarshal converts an interface into a map of values or return an error if exist an assert in the parsing process
+func unmarshal(object interface{}) (map[string]interface{}, error) {
+	data := make(map[string]interface{})
+	binaryData, ok := object.([]byte)
+	bson.Unmarshal(binaryData, &data)
+
+	var err error
+
+	if !ok {
+		err = errors.New("Parsing error")
+	}
+	return data, err
 }
