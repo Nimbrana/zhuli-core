@@ -7,6 +7,11 @@ import (
 	"gopkg.in/mgo.v2/bson"
 )
 
+const (
+	parsingError   = "[MongoDBDriver] Parsing error"
+	notInitialized = "[MongoDBDriver] Database connection is nil"
+)
+
 // MongoDBDriver represent an interface to mongodb including de Server url, Database and Collection names.
 type MongoDBDriver struct {
 	Server     string
@@ -46,6 +51,11 @@ func (d *MongoDBDriver) Insert(object interface{}) error {
 	if err != nil {
 		return err
 	}
+
+	if err = checkForErrors(); err != nil {
+		return err
+	}
+
 	err = mDatabase.C(d.Collection).Insert(&data)
 	return err
 }
@@ -76,7 +86,15 @@ func unmarshal(object interface{}) (map[string]interface{}, error) {
 	var err error
 
 	if !ok {
-		err = errors.New("Parsing error")
+		err = errors.New(parsingError)
 	}
 	return data, err
+}
+
+func checkForErrors() error {
+	if mDatabase == nil {
+		return errors.New(notInitialized)
+	}
+
+	return nil
 }

@@ -66,13 +66,6 @@ func TestGetAllData(t *testing.T) {
 	dc.User = ""
 	dc.Password = ""
 
-	// movie.ID = bson.NewObjectId()
-	// movie.Name = "Dunkirk"
-	// movie.Description = "World war 2 movie"
-	// movie.CoverImage = "https://image.tmdb.org/t/p/w640/cUqEgoP6kj8ykfNjJx3Tl5zHCcN.jpg"
-
-	//bMovie, _ := bson.Marshal(movie)
-
 	if err := dc.Init(); err != nil {
 		t.Errorf("%s", err)
 	}
