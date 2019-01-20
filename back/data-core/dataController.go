@@ -1,3 +1,4 @@
+// Package datacore provides a bundle of functions to save into databses or filesystem
 package datacore
 
 import "errors"
